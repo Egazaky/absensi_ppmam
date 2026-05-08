@@ -8,7 +8,7 @@
             <div class="row">
                 <div class="col-sm">
                     <div class="form-group">
-                        <label for="santri_id">Nama Santri</label>            
+                        <label for="santri_id">Nama Santri</label>
                         <select class="form-control select2 @error('santri_id') is-invalid @enderror" name="santri_id" required>
                             <option selected disabled>Pilih Santri</option>
                             @foreach ($data as $santri)
@@ -18,19 +18,19 @@
                                     @endif>{{ $santri->name }}</option>
                             @endforeach
                         </select>
-            
+
                         @error('santri_id')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
-                        @enderror            
+                        @enderror
                     </div>
                 </div>
                 <div class="col-sm">
                     <div class="form-group">
                         <label for="email">{{ __('E-Mail Address') }}</label>
                         <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
-            
+
                         @error('email')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -43,16 +43,19 @@
                         <label for="role">Role</label>
                         <select class="form-control select2 @error('role') is-invalid @enderror" name="role" required>
                             <option selected disabled>Pilih Role</option>
-                            <option value="Administrator" {{-- @if(Auth::user()->role=='Pengurus')disabled@endif --}}>Administrator</option>
+                            @if (Auth::user()->role == 'SuperAdmin')
+                                <option value="SuperAdmin">SuperAdmin</option>
+                            @endif
+                            <option value="Administrator">Administrator</option>
                             <option value="Pengurus">Pengurus</option>
                             <option value="Santri">Santri</option>
                         </select>
-            
+
                         @error('role')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
-                        @enderror            
+                        @enderror
                     </div>
                 </div>
             </div>
@@ -67,7 +70,7 @@
                                     <a href="javascript:void(0)"><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
                                 </div>
                             </div>
-            
+
                             @error('password')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -79,14 +82,14 @@
                 <div class="col-sm">
                     <div class="form-group">
                         <label for="password_confirmation">{{ __('Confirm Password') }}</label>
-                        <div class="input-group" id="show_hide_password">                            
+                        <div class="input-group" id="show_hide_password">
                             <input id="password_confirmation" type="password" class="form-control @error('password') is-invalid @enderror" name="password_confirmation" required autocomplete="new-password">
                             <div class="input-group-append">
                                 <div class="input-group-text">
                                     <a href="javascript:void(0)"><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
                                 </div>
                             </div>
-                            
+
                             @error('password')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>

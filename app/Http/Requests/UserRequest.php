@@ -26,11 +26,19 @@ class UserRequest extends FormRequest
      */
     public function rules()
     {
+        $userRole = auth()->user()->role;
+
+        // SuperAdmin dan Administrator bisa assign SuperAdmin
+        // Role lain hanya bisa assign Administrator, Pengurus, Santri
+        $allowedRoles = ($userRole == 'SuperAdmin' || $userRole == 'Administrator')
+            ? 'SuperAdmin,Administrator,Pengurus,Santri'
+            : 'Administrator,Pengurus,Santri';
+
         return [
             'santri_id' => 'required|exists:santris,id|unique:users,santri_id,'.$this->user,
             'email' => 'required|string|email|max:255|unique:users,email,'.$this->user,
             'password' => 'required|string|confirmed|min:8',
-            'role'  => 'required|in:Administrator,Pengurus,Santri'
+            'role'  => 'required|in:' . $allowedRoles
         ];
     }
 

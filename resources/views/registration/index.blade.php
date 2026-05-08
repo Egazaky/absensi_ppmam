@@ -46,7 +46,7 @@
                         <td>{{ $result->santris->address }}</td>
                         <td align="center">
                             <a href="{{ route('registration.print', $result->id) }}" type="button" class="btn btn-sm btn-warning"><i class="fas fa-print"></i></a>
-                            @if (Auth::user()->role == 'Administrator')                            
+                            @if (Auth::user()->role == 'Administrator' || Auth::user()->role == 'SuperAdmin')
                                 <a href="javascript:void(0)" id="btn-delete" class="btn btn-sm btn-danger" onclick="deleteData('{{ $result->id }}')" data-toggle="modal" data-target="#deleteModal"><i class="fas fa-trash"></i></a>
                             @endif
                         </td>

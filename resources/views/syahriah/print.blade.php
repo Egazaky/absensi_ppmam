@@ -8,7 +8,7 @@
     <title>Bukti Pembayaran Syahriah Santri</title>
 
     <!-- Favicon -->
-    <link rel="favicon icon" href="/assets/img/ponpes.ico" type="image/x-icon">  
+    <link rel="favicon icon" href="/assets/img/ppm_am.png" type="image/x-icon">
 
     <!-- Invoice styling -->
     <style>

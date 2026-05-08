@@ -5,12 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use App\Helpers\ActivityLog;
 use App\Helpers\LogActivity;
-use App\Models\ActivityLog as ModelsActivityLog;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
 {
@@ -53,14 +49,6 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $request, $user)
     {
-        if ($user->role == 'Santri') {
-            Auth::logout();
-            Session::flush();
-
-            return redirect('login')
-                ->with('alert', 'Pengguna tidak memiliki hak akses pada web.');
-        }
-
         LogActivity::addToLog('User Login');
     }
 
@@ -73,7 +61,7 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         LogActivity::addToLog('User Logout');
-        
+
         $this->guard()->logout();
 
         $request->session()->invalidate();

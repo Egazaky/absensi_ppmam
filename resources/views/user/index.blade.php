@@ -12,9 +12,11 @@
     @endif
 
     <div class="row">
+        @if (Auth::user()->role !='Santri')
         <div class="col-md-8">
             <a href="{{ route('pengguna.create') }}" class="btn btn-primary">Tambah Pengguna</a><br><br>
         </div>
+        @endif
         <div class="col-md-4 mb-3">
             <form action="#" class="flex-sm">
                 <div class="input-group">
@@ -40,21 +42,26 @@
                 </tr>
             </thead>
             <tbody>
+                @php $counter = 1; @endphp
                 @forelse ($data as $user => $result)
+                    @if (Auth::user()->role == 'SuperAdmin' || $result->role != 'SuperAdmin')
                     <tr>
-                        <td>{{ $user + $data->firstitem() }}</td>
+                        <td>{{ $counter++ }}</td>
                         <td><a href="{{ route('santri.show', $result->santris->id) }}">{{ $result->santris->name }}</a></td>
                         <td>{{ $result->email }}</td>
                         <td>{{ $result->role }}</td>
                         <td align="center">
-                            @if (Auth::user()->role == 'Pengurus')
+                            @if (Auth::user()->role == 'Santri')
+                                <a href="{{ route('pengguna.edit', $result->id) }}" type="button" class="btn btn-sm btn-info"><i class="fas fa-pen"></i></a>
+                            @elseif (Auth::user()->role == 'Pengurus')
                                 <small class="text-warning">No Action</small>
-                            @else                                
-                                <a href="{{ route('pengguna.edit', $result->id) }}" type="button" class="btn btn-sm btn-info"><i class="fas fa-pen"></i></a>                                
+                            @else
+                                <a href="{{ route('pengguna.edit', $result->id) }}" type="button" class="btn btn-sm btn-info"><i class="fas fa-pen"></i></a>
                                 <a href="javascript:void(0)" id="btn-delete" class="btn btn-sm btn-danger" onclick="deleteData('{{ $result->id }}')" data-toggle="modal" data-target="#deleteSuratModal"><i class="fas fa-trash"></i></a>
                             @endif
                         </td>
                     </tr>
+                    @endif
                 @empty
                     <tr>
                         <td colspan="4">Tidak ada data.</td>
@@ -64,7 +71,7 @@
         </table>
     </div>
     <div class="mt-2 float-left">
-        <span class="ml-3">Data Keseluruhan: <span class="text-primary font-weight-bold">{{ DB::table('users')->count() }}</span> Pengguna.</span>
+        <span class="ml-3">Data Keseluruhan: <span class="text-primary font-weight-bold">{{ Auth::user()->role == 'SuperAdmin' ? DB::table('users')->count() : DB::table('users')->where('role', '!=', 'SuperAdmin')->count() }}</span> Pengguna.</span>
     </div>
     <div class="mt-3 float-right">
         {{ $data->links() }}
@@ -74,6 +81,7 @@
 
 @section('modal')
     <!-- Modal Delete -->
+    @if(Auth::user()->role !='Santri')
     <div class="modal fade" id="deleteSuratModal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <form action="javascript:void(0)" id="deleteForm" method="post">
@@ -97,6 +105,7 @@
             </form>
         </div>
     </div>
+    @endif
 @endsection
 
 @section('script')
@@ -105,7 +114,6 @@
             let url = window.location.origin+'/storage/in-mail/'+data;
             $('#embed-file').attr('src', url);
         }
-
         function deleteData(id) {
             let url = '{{ route("pengguna.destroy", ":id") }}';
             url     = url.replace(':id', id);

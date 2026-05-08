@@ -1,13 +1,13 @@
 @extends('layouts.home')
-@section('title_page','Tampil Data Santri')
+@section('title_page','Tampil Data Pondok')
 @section('content')
 
     <div class="container">
         <div class="row">
             <div class="col-sm-10">
                 <div class="form-group">
-                    @if ($santri->photo != null)            
-                        <img src="{{ '/storage/photo/' . $santri->photo }}" alt="Profile Image Santri" class="rounded-circle" width="200" 
+                    @if ($santri->photo != null)
+                        <img src="{{ '/storage/photo/' . $santri->photo }}" alt="Profile Image Santri" class="rounded-circle" width="200"
                         style="position: relative;width: 200px;height: 200px;overflow: hidden;">
                     @else
                         <img alt="Profile Image Santri" src="{{ asset('assets/img/avatar/avatar-1.png') }}" class="rounded-circle" width="200">
@@ -23,19 +23,19 @@
         <div class="row">
             <div class="col-sm">
                 <div class="form-group">
-                    <label for="name">Nama Santri</label>
+                    <label for="name">Nama</label>
                     <h4>{{ $santri->name }}</h4>
                 </div>
             </div>
             <div class="col-sm">
                 <div class="form-group">
-                    <label for="birth_place">Tempat Lahir Santri</label>
+                    <label for="birth_place">Tempat Lahir</label>
                     <h4>{{ $santri->birth_place }}</h4>
                 </div>
             </div>
-            <div class="col-sm">                   
+            <div class="col-sm">
                 <div class="form-group">
-                    <label for="birth_date">Tanggal Lahir Santri</label>
+                    <label for="birth_date">Tanggal Lahir</label>
                     <h4>{{ \Carbon\Carbon::parse($santri->birth_date)->isoFormat('D MMMM Y') }}</h4>
                 </div>
             </div>
@@ -43,13 +43,13 @@
         <div class="row">
             <div class="col-sm-4">
                 <div class="form-group">
-                    <label for="phone">No. HP Santri</label>
+                    <label for="phone">No. HP</label>
                     <h4>{{ $santri->phone }}</h4>
                 </div>
             </div>
             <div class="col-sm-8">
                 <div class="form-group">
-                    <label for="address">Alamat Santri</label>
+                    <label for="address">Alamat</label>
                     <h4>{{ $santri->address }}</h4>
                 </div>
             </div>
@@ -57,13 +57,13 @@
         <div class="row">
             <div class="col-sm-4">
                 <div class="form-group">
-                    <label for="school_old">Asal Sekolah Santri</label>
+                    <label for="school_old">Asal Sekolah</label>
                     <h4>{{ $santri->school_old }}</h4>
                 </div>
             </div>
             <div class="col-sm-8">
                 <div class="form-group">
-                    <label for="school_address_old">Alamat Asal Sekolah Santri</label>
+                    <label for="school_address_old">Alamat Asal Sekolah</label>
                     <h4>{{ $santri->school_address_old }}</h4>
                 </div>
             </div>
@@ -71,13 +71,13 @@
         <div class="row">
             <div class="col-sm-4">
                 <div class="form-group">
-                    <label for="school_current">Sekolah Sekarang Santri</label>
+                    <label for="school_current">Kampus Sekarang</label>
                     <h4>{{ $santri->school_current }}</h4>
                 </div>
             </div>
             <div class="col-sm-8">
                 <div class="form-group">
-                    <label for="school_address_current">Alamat Sekolah Sekarang Santri</label>
+                    <label for="school_address_current">Alamat Kuliah Sekarang</label>
                     <h4>{{ $santri->school_address_current }}</h4>
                 </div>
             </div>
@@ -85,27 +85,27 @@
         <div class="row">
             <div class="col-sm-4">
                 <div class="form-group">
-                    <label for="father_name">Nama Ayah Santri</label>
+                    <label for="father_name">Nama Ayah</label>
                     <h4>{{ $santri->father_name }}</h4>
                 </div>
             </div>
             <div class="col-sm-8">
                 <div class="form-group">
-                    <label for="father_job">Pekerjaan Ayah Santri</label>
+                    <label for="father_job">Pekerjaan Ayah</label>
                     <h4>{{ $santri->father_job }}</h4>
                 </div>
             </div>
         </div>
-        <div class="row">            
+        <div class="row">
             <div class="col-sm-4">
                 <div class="form-group">
-                    <label for="mother_name">Nama Ibu Santri</label>
+                    <label for="mother_name">Nama Ibu</label>
                     <h4>{{ $santri->mother_name }}</h4>
                 </div>
             </div>
             <div class="col-sm-8">
                 <div class="form-group">
-                    <label for="mother_job">Pekerjaan Ibu Santri</label>
+                    <label for="mother_job">Pekerjaan Ibu</label>
                     <h4>{{ $santri->mother_job }}</h4>
                 </div>
             </div>
@@ -113,7 +113,7 @@
         <div class="row">
             <div class="col-sm">
                 <div class="form-group">
-                    <label for="parent_phone">No. HP Orang Tua Santri</label>
+                    <label for="parent_phone">No. HP Orang Tua</label>
                     <h4>{{ $santri->parent_phone }}</h4>
                 </div>
             </div>
@@ -132,19 +132,19 @@
         </div>
     </div>
 
-    
- 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @endsection

@@ -1,26 +1,7 @@
 <!-- [in English README](https://github.com) 🇬🇧 👈 SOON -->
 
-<h1 align="center">
-  <img src="https://raw.githubusercontent.com/dibaliqaja/pesantren-cms/master/public/assets/img/ponpes.svg" width="130px"/><br/>
-  Pesantren CMS
-</h1>
 <p align="center">Sistem Manajemen Pondok Pesantren</p>
 
-<p align="center">
-    <a href="https://github.com/dibaliqaja/pesantren-cms/actions/workflows/laravel.yml" target="_blank">
-        <img src="https://img.shields.io/badge/actions-passing-success?style=for-the-badge&logo=github-actions" alt="github actions" />
-    </a>
-    &nbsp;
-    <a href="https://github.com/dibaliqaja/pesantren-cms/releases" target="_blank">
-        <img src="https://img.shields.io/badge/version-v1.0.0-red?style=for-the-badge&logo=none" alt="system version" />
-    </a>
-    &nbsp;
-    <a href="https://github.com/dibaliqaja/pesantren-cms" target="_blank">
-        <img src="https://img.shields.io/badge/Laravel-v10.9.0-fb503b?style=for-the-badge&logo=laravel" alt="laravel version" />
-    </a>
-    &nbsp;
-    <img src="https://img.shields.io/badge/license-mit-red?style=for-the-badge&logo=none" alt="license" />
-</p>
 
 ### Fitur
 - Admin Panel

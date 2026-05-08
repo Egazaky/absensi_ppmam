@@ -27,4 +27,9 @@ class Santri extends Model
     {
         return $this->hasMany(Syahriah::class);
     }
+
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
+    }
 }

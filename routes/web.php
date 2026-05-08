@@ -2,6 +2,8 @@
 
 use \App\Http\Controllers\Web\CashBookController;
 use \App\Http\Controllers\Web\CostController;
+use App\Http\Controllers\Web\KehadiranController;
+use App\Http\Controllers\Web\QiyamullailController;
 use App\Http\Controllers\Web\LogActivityController;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\InMailController;
@@ -10,6 +12,7 @@ use \App\Http\Controllers\Web\RegistrationCostController;
 use App\Http\Controllers\Web\SantriController;
 use \App\Http\Controllers\Web\SyahriahController;
 use App\Http\Controllers\Web\UserController;
+use App\Http\Controllers\Web\ScheduleController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -50,7 +53,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('pembayaran-pendaftaran/create', [RegistrationCostController::class, 'create'])->name('registration.create');
     Route::post('pembayaran-pendaftaran', [RegistrationCostController::class, 'store'])->name('registration.store');
     Route::get('pembayaran-pendaftaran/print/{id}', [RegistrationCostController::class, 'print'])->name('registration.print');
-    Route::delete('pembayaran-pendaftaran/{id}', [RegistrationCostController::class, 'destroy'])->name('registration.destroy');    
+    Route::delete('pembayaran-pendaftaran/{id}', [RegistrationCostController::class, 'destroy'])->name('registration.destroy');
 
     // Syahriah (SPP)
     Route::get('syahriah', [SyahriahController::class, 'index'])->name('syahriah.index');
@@ -69,4 +72,23 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('surat-masuk', InMailController::class);
     Route::resource('surat-keluar', OutMailController::class);
+
+    // Daftar Kehadiran
+    Route::get('kehadiran', [KehadiranController::class, 'index'])->name('kehadiran.index');
+    Route::post('kehadiran', [KehadiranController::class, 'store'])->name('kehadiran.store');
+    Route::post('kehadiran/toggle', [KehadiranController::class, 'toggle'])->name('kehadiran.toggle');
+    // Debug route to inspect attendances for a date (SuperAdmin only)
+    Route::get('kehadiran/debug/{date}', [KehadiranController::class, 'debugDate'])->name('kehadiran.debug');
+    Route::get('kehadiran/scan', [KehadiranController::class, 'scan'])->name('kehadiran.scan');
+    Route::get('kehadiran/qrcode/{id}', [KehadiranController::class, 'qrcode'])->name('kehadiran.qrcode');
+    Route::get('rekapan-kehadiran', [KehadiranController::class, 'report'])->name('kehadiran.report');
+    Route::get('rekapan-kehadiran/pdf', [KehadiranController::class, 'exportPdf'])->name('kehadiran.export.pdf');
+    Route::get('rekapan-kehadiran/excel', [KehadiranController::class, 'exportExcel'])->name('kehadiran.export.excel');
+
+    // Absensi Qiyamullail
+    Route::get('absensi-qiyam', [QiyamullailController::class, 'index'])->name('qiyam.index');
+    Route::post('absensi-qiyam', [QiyamullailController::class, 'store'])->name('qiyam.store');
+    Route::get('rekapan-qiyam', [QiyamullailController::class, 'report'])->name('qiyam.report');
+
+    Route::resource('jadwal', ScheduleController::class);
 });

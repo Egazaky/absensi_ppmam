@@ -12,8 +12,8 @@
     @endif
 
     <div class="row">
-        <div class="col-md-8">    
-            <a href="{{ route('syahriah.create') }}" class="btn btn-primary">Bayar Syahriah (SPP)</a><br><br>                      
+        <div class="col-md-8">
+            <a href="{{ route('syahriah.create') }}" class="btn btn-primary">Bayar Syahriah (SPP)</a><br><br>
         </div>
         <div class="col-md-4 mb-3">
             <form action="#" class="flex-sm">
@@ -30,7 +30,7 @@
                         <button onclick="window.location.href='{{ route('syahriah.index') }}'" type="button" class="btn btn-md btn-secondary rounded"><i class="fas fa-sync-alt"></i></button>
                     </div>
                 </div>
-                <br> 
+                <br>
             </form>
         </div>
     </div>
@@ -148,7 +148,7 @@
     <br><br><br>
     <div class="container">
         <div class="row mb-3">
-            <div class="col-md-8">                
+            <div class="col-md-8">
                 <h4>Riwayat Pembayaran</h4>
             </div>
             <div class="col-md-4">
@@ -187,7 +187,7 @@
                             <td>{{ $result->date }}</td>
                             <td align="center">
                                 <a href="{{ route('syahriah.print', $result->id) }}" type="button" class="btn btn-sm btn-warning"><i class="fas fa-print"></i></a>
-                                @if (auth()->user()->role == 'Administrator')      
+                                @if (auth()->user()->role == 'Administrator' || auth()->user()->role == 'SuperAdmin')
                                     <a href="javascript:void(0)" id="btn-delete" class="btn btn-sm btn-danger" onclick="deleteData('{{ $result->id }}')" data-toggle="modal" data-target="#deleteSyahriahModal"><i class="fas fa-trash"></i></a>
                                 @endif
                             </td>

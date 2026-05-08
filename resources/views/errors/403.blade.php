@@ -6,7 +6,7 @@
   <title>403 &mdash; Sistem Manajemen Pondok Pesantren</title>
 
   <!-- Favicon -->
-  <link rel="favicon icon" href="/assets/img/ponpes.ico" type="image/x-icon">
+  <link rel="favicon icon" href="/assets/img/ppm_am.png" type="image/x-icon">
 
   <!-- General CSS Files -->
   <link rel="stylesheet" href="{{ asset('assets/modules/bootstrap/css/bootstrap.min.css') }}">

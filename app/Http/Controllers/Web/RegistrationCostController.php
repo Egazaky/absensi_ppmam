@@ -91,7 +91,7 @@ class RegistrationCostController extends Controller
 
         LogActivity::addToLog('Bayar Pendaftaran ' . $santri->santris->name);
         return redirect()->route('registration.index')
-            ->with('alert', 'Pembayaran Pendaftaran Santri berhasil dilakukan.');    
+            ->with('alert', 'Pembayaran Pendaftaran berhasil dilakukan.');
     }
 
     /**
@@ -105,7 +105,7 @@ class RegistrationCostController extends Controller
         if (Gate::allows('admin')) {
             $regcost = RegistrationCost::findOrFail($id);
             $regcost->delete();
-    
+
             LogActivity::addToLog('Hapus Data Pembayaran Pendaftaran');
             return redirect()->route('registration.index')
                 ->with('alert','Data Pembayaran berhasil dihapus.');

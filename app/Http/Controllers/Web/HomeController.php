@@ -35,13 +35,13 @@ class HomeController extends Controller
     public function index(Santri $santri, User $user, InMail $inMail, OutMail $outMail, CashBook $cashBook)
     {
         $santri   = $santri->count();
-        $users    = $user->count();
+        $users    = $user->where('role', '!=', 'SuperAdmin')->count();
         $in_mail  = $inMail->count();
         $out_mail = $outMail->count();
         $debit    = $cashBook->sum('debit');
         $credit   = $cashBook->sum('credit');
         $balance  = $cashBook->sum(DB::raw('debit - credit'));
-        
+
         return view('home', compact(
             'santri',
             'users',

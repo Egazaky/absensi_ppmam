@@ -10,6 +10,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class SantriController extends Controller
 {
@@ -30,16 +32,47 @@ class SantriController extends Controller
      */
     public function index(Request $request)
     {
-        $data       = Santri::latest()->paginate(10);
-        $keyword    = $request->keyword;
-        if ($keyword)
-            $data   = Santri::where('name', 'LIKE', "%$keyword%")
-                ->orWhere('address', 'LIKE', "%$keyword%")
-                ->orWhere('phone', 'LIKE', "%$keyword%")
-                ->latest()
-                ->paginate(10);
+        $query = Santri::query();
 
-        return view('santri.index', compact('data'));
+        // Santri hanya bisa lihat datanya sendiri
+        if (auth()->user()->role == 'Santri') {
+            // Santri hanya lihat santri nya sendiri
+            $query->whereHas('user', function ($q) {
+                $q->where('id', auth()->id());
+            });
+        } else if (auth()->user()->role != 'SuperAdmin') {
+            // Admin dan Pengurus tidak lihat SuperAdmin
+            $query->whereDoesntHave('user', function ($q) {
+                $q->where('role', 'SuperAdmin');
+            });
+        }
+
+        $data       = $query->latest()->paginate(10);
+        $totalCount = $query->count();
+        $keyword    = $request->keyword;
+
+        if ($keyword) {
+            $searchQuery = Santri::where('name', 'LIKE', "%$keyword%")
+                ->orWhere('address', 'LIKE', "%$keyword%")
+                ->orWhere('phone', 'LIKE', "%$keyword%");
+
+            // Filter untuk Santri (hanya lihat dirinya sendiri)
+            if (auth()->user()->role == 'Santri') {
+                $searchQuery->whereHas('user', function ($q) {
+                    $q->where('id', auth()->id());
+                });
+            } else if (auth()->user()->role != 'SuperAdmin') {
+                // Filter untuk non-SuperAdmin
+                $searchQuery->whereDoesntHave('user', function ($q) {
+                    $q->where('role', 'SuperAdmin');
+                });
+            }
+
+            $totalCount = $searchQuery->count();
+            $data = $searchQuery->latest()->paginate(10);
+        }
+
+        return view('santri.index', compact('data', 'totalCount'));
     }
 
     /**
@@ -73,10 +106,33 @@ class SantriController extends Controller
             $destinationPath = public_path('storage/photo');
             $file->move($destinationPath, $input['photo']);
             $validatedData['photo'] = $input['photo'];
-            $santri->create($validatedData);
+            $created = $santri->create($validatedData);
+            // Buat user otomatis untuk Santri baru
+            try {
+                User::create([
+                        'email' => 'santri_'.Str::random(5).'@ppm.am',
+                    'password' => Hash::make(substr($validatedData['phone'] ?? 'password', -6)),
+                    'role' => 'Santri',
+                    'santri_id' => $created->id,
+                ]);
+            } catch (\Exception $e) {
+                // Jika pembuatan user gagal, tetap lanjut tapi catat log
+                LogActivity::addToLog('Gagal membuat user otomatis untuk santri: ' . ($created->id ?? 'unknown'));
+            }
         } else {
             $validatedData = $request->validated();
-            $santri->create($validatedData);
+            $created = $santri->create($validatedData);
+            // Buat user otomatis untuk Santri baru
+            try {
+                User::create([
+                        'email' => 'santri_'.Str::random(5).'@ppm.am',
+                    'password' => Hash::make(substr($validatedData['phone'] ?? 'password', -6)),
+                    'role' => 'Santri',
+                    'santri_id' => $created->id,
+                ]);
+            } catch (\Exception $e) {
+                LogActivity::addToLog('Gagal membuat user otomatis untuk santri: ' . ($created->id ?? 'unknown'));
+            }
         }
 
         LogActivity::addToLog('Tambah Data Santri');
@@ -103,7 +159,17 @@ class SantriController extends Controller
      */
     public function edit($id)
     {
-        return view('santri.edit', ['santri' => Santri::findOrFail($id)]);
+        $santri = Santri::findOrFail($id);
+
+        // Santri hanya bisa edit datanya sendiri
+        if (auth()->user()->role == 'Santri') {
+            $userSantri = auth()->user()->santris;
+            if (!$userSantri || $userSantri->id !== $santri->id) {
+                abort(403, 'Anda tidak memiliki hak akses untuk mengedit data santri lain.');
+            }
+        }
+
+        return view('santri.edit', ['santri' => $santri]);
     }
 
     /**
@@ -116,6 +182,14 @@ class SantriController extends Controller
     public function update(SantriRequest $request, $id)
     {
         $santri = Santri::findOrFail($id);
+
+        // Santri hanya bisa update datanya sendiri
+        if (auth()->user()->role == 'Santri') {
+            $userSantri = auth()->user()->santris;
+            if (!$userSantri || $userSantri->id !== $santri->id) {
+                abort(403, 'Anda tidak memiliki hak akses untuk mengubah data santri lain.');
+            }
+        }
 
         if ($request->hasFile('photo')) {
             $validatedData = $request->validated();
@@ -136,7 +210,7 @@ class SantriController extends Controller
 
         LogActivity::addToLog('Edit Data Santri');
         return redirect()->route('santri.index')
-            ->with('alert', 'Santri berhasil diupdate.');
+            ->with('alert', 'Data berhasil diupdate.');
     }
 
     /**
@@ -147,10 +221,15 @@ class SantriController extends Controller
      */
     public function destroy($id)
     {
+        // Santri tidak boleh delete
+        if (auth()->user()->role == 'Santri') {
+            abort(403, 'Santri tidak dapat menghapus data.');
+        }
+
         if (Gate::allows('admin')) {
             $santri = Santri::findOrFail($id);
             $user = User::where('santri_id', $id)->first();
-           
+
             if (auth()->user() == $user) {
                 return redirect()->back()
                     ->with('alert','Gagal menghapus data sendiri.');
@@ -162,9 +241,9 @@ class SantriController extends Controller
 
             LogActivity::addToLog('Hapus Data Santri');
             return redirect()->route('santri.index')
-                ->with('alert','Data Santri berhasil dihapus.');
+                ->with('alert','Data berhasil dihapus.');
         }
-        
+
         abort(403);
     }
 }

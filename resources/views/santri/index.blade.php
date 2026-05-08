@@ -1,5 +1,5 @@
 @extends('layouts.home')
-@section('title_page','Data Santri')
+@section('title_page','Data Pondok')
 @section('content')
 
     @if (Session::has('alert'))
@@ -12,9 +12,11 @@
     @endif
 
     <div class="row">
+        @if (Auth::user()->role !='Santri')
         <div class="col-md-8">
-            <a href="{{ route('santri.create') }}" class="btn btn-primary">Tambah Santri</a><br><br>
+            <a href="{{ route('santri.create') }}" class="btn btn-primary">Tambah Data</a><br><br>
         </div>
+        @endif
         <div class="col-md-4 mb-3">
             <form action="#" class="flex-sm">
                 <div class="input-group">
@@ -47,9 +49,14 @@
                         <td>{{ $result->address }}</td>
                         <td>{{ $result->phone }}</td>
                         <td align="center">
-                            @if (Auth::user()->role == 'Pengurus')
+                            @if (Auth::user()->role == 'Santri')
+                                <a href="{{ route('kehadiran.qrcode', $result->id) }}" target="_blank" class="btn btn-sm btn-success" title="QR Code"><i class="fas fa-qrcode"></i></a>
                                 <a href="{{ route('santri.edit', $result->id) }}" type="button" class="btn btn-sm btn-info"><i class="fas fa-pen"></i></a>
-                            @else                                
+                            @elseif (Auth::user()->role == 'Pengurus')
+                                <a href="{{ route('kehadiran.qrcode', $result->id) }}" target="_blank" class="btn btn-sm btn-success" title="QR Code"><i class="fas fa-qrcode"></i></a>
+                                <a href="{{ route('santri.edit', $result->id) }}" type="button" class="btn btn-sm btn-info"><i class="fas fa-pen"></i></a>
+                            @else
+                                <a href="{{ route('kehadiran.qrcode', $result->id) }}" target="_blank" class="btn btn-sm btn-success" title="QR Code"><i class="fas fa-qrcode"></i></a>
                                 <a href="{{ route('santri.edit', $result->id) }}" type="button" class="btn btn-sm btn-info"><i class="fas fa-pen"></i></a>
                                 <a href="javascript:void(0)" id="btn-delete" class="btn btn-sm btn-danger" onclick="deleteData('{{ $result->id }}')" data-toggle="modal" data-target="#deleteSantriModal"><i class="fas fa-trash"></i></a>
                             @endif
@@ -64,7 +71,7 @@
         </table>
     </div>
     <div class="mt-2 float-left">
-        <span class="ml-3">Data Keseluruhan: <span class="text-primary font-weight-bold">{{ DB::table('santris')->count() }}</span> Santri telah terdaftar.</span>
+        <span class="ml-3">Data Keseluruhan: <span class="text-primary font-weight-bold">{{ $totalCount }}</span> telah terdaftar.</span>
     </div>
     <div class="mt-3 float-right">
         {{ $data->links() }}
