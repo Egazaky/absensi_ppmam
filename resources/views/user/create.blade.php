@@ -63,7 +63,7 @@
                 <div class="col-sm">
                     <div class="form-group">
                         <label for="password">{{ __('Password') }}</label>
-                        <div class="input-group" id="show_hide_password">
+                        <div class="input-group show-hide-password-group">
                             <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
                             <div class="input-group-append">
                                 <div class="input-group-text">
@@ -82,7 +82,7 @@
                 <div class="col-sm">
                     <div class="form-group">
                         <label for="password_confirmation">{{ __('Confirm Password') }}</label>
-                        <div class="input-group" id="show_hide_password">
+                        <div class="input-group show-hide-password-group">
                             <input id="password_confirmation" type="password" class="form-control @error('password') is-invalid @enderror" name="password_confirmation" required autocomplete="new-password">
                             <div class="input-group-append">
                                 <div class="input-group-text">
@@ -115,16 +115,19 @@
 @section('script')
     <script>
         $(document).ready(function() {
-            $("#show_hide_password a").on('click', function(event) {
+            $(".show-hide-password-group a").on('click', function(event) {
                 event.preventDefault();
-                if($('#show_hide_password input').attr("type") == "text"){
-                    $('#show_hide_password input').attr('type', 'password');
-                    $('#show_hide_password i').addClass( "fa-eye-slash" );
-                    $('#show_hide_password i').removeClass( "fa-eye" );
-                }else if($('#show_hide_password input').attr("type") == "password"){
-                    $('#show_hide_password input').attr('type', 'text');
-                    $('#show_hide_password i').removeClass( "fa-eye-slash" );
-                    $('#show_hide_password i').addClass( "fa-eye" );
+                var $group = $(this).closest('.show-hide-password-group');
+                var $input = $group.find('input');
+                var $icon = $group.find('i');
+                if($input.attr("type") == "text"){
+                    $input.attr('type', 'password');
+                    $icon.addClass("fa-eye-slash");
+                    $icon.removeClass("fa-eye");
+                }else if($input.attr("type") == "password"){
+                    $input.attr('type', 'text');
+                    $icon.removeClass("fa-eye-slash");
+                    $icon.addClass("fa-eye");
                 }
             });
         });

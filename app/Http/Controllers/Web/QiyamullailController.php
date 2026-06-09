@@ -6,8 +6,10 @@ use App\Helpers\LogActivity;
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use App\Models\Santri;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class QiyamullailController extends Controller
 {
@@ -19,12 +21,44 @@ class QiyamullailController extends Controller
     /**
      * Display qiyam recap from Saturday to Thursday for each santri.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function report(Request $request)
     {
         $selectedDate = $request->date ?? date('Y-m-d');
+        $data = $this->buildQiyamReportData($selectedDate);
+
+        return view('qiyamullail.report', $data);
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $selectedDate = $request->date ?? date('Y-m-d');
+        $data = $this->buildQiyamReportData($selectedDate);
+
+        $pdf = Pdf::loadView('qiyamullail.report_pdf', $data)
+            ->setPaper('a4', 'landscape');
+
+        $filename = 'rekapan-qiyamullail-'.$data['startOfPeriod']->format('Ymd').'-'.$data['endOfPeriod']->format('Ymd').'.pdf';
+
+        return $pdf->download($filename);
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $selectedDate = $request->date ?? date('Y-m-d');
+        $data = $this->buildQiyamReportData($selectedDate);
+        $html = view('qiyamullail.report_excel', $data)->render();
+        $filename = 'rekapan-qiyamullail-'.$data['startOfPeriod']->format('Ymd').'-'.$data['endOfPeriod']->format('Ymd').'.xls';
+
+        return response($html, 200, [
+            'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+        ]);
+    }
+
+    private function buildQiyamReportData(string $selectedDate): array
+    {
         $date = Carbon::parse($selectedDate);
 
         // Start from Saturday of the week that contains the selected date
@@ -53,7 +87,7 @@ class QiyamullailController extends Controller
             $query->whereHas('user', function ($q) {
                 $q->where('id', auth()->id());
             });
-        } else if (auth()->user()->role != 'SuperAdmin') {
+        } elseif (auth()->user()->role != 'SuperAdmin') {
             // Admin dan Pengurus tidak lihat SuperAdmin
             $query->whereDoesntHave('user', function ($q) {
                 $q->where('role', 'SuperAdmin');
@@ -71,24 +105,24 @@ class QiyamullailController extends Controller
             ->whereDate('date', '<=', $endDate)
             ->get()
             ->keyBy(function ($item) {
-                return $item->santri_id . '_' . $item->date->format('Y-m-d');
+                return $item->santri_id.'_'.$item->date->format('Y-m-d');
             });
 
         $attendanceData = [];
         foreach ($santris as $santri) {
             $attendanceData[$santri->id] = [
                 'name' => $santri->name,
-                'days' => []
+                'days' => [],
             ];
 
             foreach ($weekDates as $wd) {
-                $key = $santri->id . '_' . $wd['date'];
+                $key = $santri->id.'_'.$wd['date'];
                 $present = $attendances->has($key);
                 $attendanceData[$santri->id]['days'][$wd['date']] = $present;
             }
         }
 
-        return view('qiyamullail.report', compact('weekDates', 'attendanceData', 'startOfPeriod', 'endOfPeriod', 'selectedDate'));
+        return compact('weekDates', 'attendanceData', 'startOfPeriod', 'endOfPeriod', 'selectedDate');
     }
 
     public function index(Request $request)
@@ -96,8 +130,11 @@ class QiyamullailController extends Controller
         $date = $request->date ?? date('Y-m-d');
         $query = Santri::query();
 
-        // Jika user bukan SuperAdmin, jangan tampilkan santri dengan user role SuperAdmin
-        if (auth()->user()->role != 'SuperAdmin') {
+        if (auth()->user()->isSantri()) {
+            $query->whereHas('user', function ($q) {
+                $q->where('id', auth()->id());
+            });
+        } elseif (! auth()->user()->isSuperAdmin()) {
             $query->whereDoesntHave('user', function ($q) {
                 $q->where('role', 'SuperAdmin');
             });
@@ -125,17 +162,24 @@ class QiyamullailController extends Controller
         $santriId = $request->santri_id;
         $date = Carbon::parse($request->date)->format('Y-m-d');
 
+        if (auth()->user()->isSantri()) {
+            $userSantri = auth()->user()->santris;
+            if (! $userSantri || $userSantri->id !== $santriId) {
+                abort(403, 'Anda tidak memiliki hak akses untuk mengisi absensi santri lain.');
+            }
+        }
+
         // Simpan atau update attendance untuk sesi Qiyamullail
         Attendance::updateOrCreate(
             [
                 'date' => $date,
                 'santri_id' => $santriId,
-                'session' => 'Qiyamullail'
+                'session' => 'Qiyamullail',
             ],
             ['status' => true]
         );
 
-        LogActivity::addToLog('Absensi Qiyamullail disimpan untuk santri ' . $santriId . ' tanggal ' . $date);
+        LogActivity::addToLog('Absensi Qiyamullail disimpan untuk santri '.$santriId.' tanggal '.$date);
 
         return redirect()->route('qiyam.index', ['date' => $date])->with('alert', 'Absensi tersimpan.');
     }

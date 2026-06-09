@@ -30,7 +30,7 @@ class CostRequest extends FormRequest
             'spp' => 'required|numeric|min:1',
             'construction' => 'required|numeric|min:1',
             'facilities' => 'required|numeric|min:1',
-            'wardrobe' => 'required|numeric|min:1'
+            'wardrobe' => 'required|numeric|min:1',
         ];
     }
 

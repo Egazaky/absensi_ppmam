@@ -11,6 +11,7 @@ class LogActivity extends Model
     use HasFactory, Uuids;
 
     public $incrementing = false;
+
     protected $guarded = [];
 
     public function users()

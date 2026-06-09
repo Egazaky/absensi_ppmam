@@ -23,6 +23,12 @@
         <div class="row">
             <div class="col-sm">
                 <div class="form-group">
+                    <label for="nis">NIS (Nomor Induk Santri)</label>
+                    <h4>{{ $santri->nis ?: '-' }}</h4>
+                </div>
+            </div>
+            <div class="col-sm">
+                <div class="form-group">
                     <label for="name">Nama</label>
                     <h4>{{ $santri->name }}</h4>
                 </div>

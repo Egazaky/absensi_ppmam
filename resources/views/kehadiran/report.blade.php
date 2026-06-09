@@ -64,12 +64,12 @@
                             $hasIsya = !($weekDate['day_name'] === 'Sabtu');
                         @endphp
                         @if ($hasSubuh)
-                            <th class="text-center" style="background-color: #e3f2fd;">
+                            <th class="text-center" style="background-color: rgba(79, 140, 255, 0.12); color: var(--primary);">
                                 <i class="fas fa-sun"></i> Subuh
                             </th>
                         @endif
                         @if ($hasIsya)
-                            <th class="text-center" style="background-color: #fff3e0;">
+                            <th class="text-center" style="background-color: rgba(124, 58, 237, 0.12); color: #a78bfa;">
                                 <i class="fas fa-moon"></i> Isya
                             </th>
                         @endif
@@ -93,7 +93,7 @@
                                 $hasIsya = !($weekDate['day_name'] === 'Sabtu');
                             @endphp
                             @if ($hasSubuh)
-                                <td align="center" style="background-color: #f5f5f5;">
+                                <td align="center" style="background-color: rgba(79, 140, 255, 0.04);">
                                     @if ($subuhHadir)
                                         <span class="badge badge-success" title="Subuh: Hadir">
                                             <i class="fas fa-check"></i>
@@ -106,7 +106,7 @@
                                 </td>
                             @endif
                             @if ($hasIsya)
-                                <td align="center" style="background-color: #fafafa;">
+                                <td align="center" style="background-color: rgba(124, 58, 237, 0.04);">
                                     @if ($isyaHadir)
                                         <span class="badge badge-success" title="Isya: Hadir">
                                             <i class="fas fa-check"></i>

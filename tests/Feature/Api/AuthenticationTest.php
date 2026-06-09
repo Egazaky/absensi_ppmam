@@ -16,15 +16,15 @@ class AuthenticationTest extends TestCase
         $response = $this->postJson('api/v1/login');
         $response->assertStatus(422);
         $response->assertJson([
-            "status" => "error",
-            "message" => [
-                "email" => [
-                    "The email field is required."
+            'status' => 'error',
+            'message' => [
+                'email' => [
+                    'The email field is required.',
                 ],
-                "password" => [
-                    "The password field is required."
-                ]
-            ]
+                'password' => [
+                    'The password field is required.',
+                ],
+            ],
         ]);
     }
 
@@ -34,28 +34,28 @@ class AuthenticationTest extends TestCase
         $this->seed(UsersTableSeeder::class);
 
         $loginData = [
-            'email'    => 'santri@ponpes.com',
-            'password' => 'password'
+            'email' => 'santri@ponpes.com',
+            'password' => 'password',
         ];
 
         $response = $this->postJson('api/v1/login', $loginData, ['Accept' => 'application/json']);
         $response->assertStatus(200);
         $response->assertJson([
-            "status" => "success",
-            "message" => "User login success"
+            'status' => 'success',
+            'message' => 'User login success',
         ]);
         $response->assertJsonStructure([
-            "status",
-            "message",
-            "data" => [
-                "access_token",
-                "token_type",
-                "expires_in",
-                "santri_id",
-                "email",
-                "name",
-                "role",
-            ]
+            'status',
+            'message',
+            'data' => [
+                'access_token',
+                'token_type',
+                'expires_in',
+                'santri_id',
+                'email',
+                'name',
+                'role',
+            ],
         ]);
         $this->assertAuthenticated();
     }

@@ -16,8 +16,8 @@ class AuthenticationTest extends TestCase
         $response = $this->post('login');
         $response->assertStatus(302);
         $response->assertSessionHasErrors([
-            'email'    => "The email field is required.",
-            'password' => "The password field is required.",
+            'email' => 'The email field is required.',
+            'password' => 'The password field is required.',
         ]);
     }
 
@@ -27,7 +27,7 @@ class AuthenticationTest extends TestCase
         $this->seed(UsersTableSeeder::class);
 
         $response = $this->post(route('login'), [
-            'email'    => 'admin@ponpes.com',
+            'email' => 'admin@ponpes.com',
             'password' => 'password',
         ]);
         $response->assertRedirect(route('home'));
@@ -35,11 +35,11 @@ class AuthenticationTest extends TestCase
         $response2->assertOk();
         $response2->assertSee('Dashboard');
         $response2->assertSee('Santri');
-        $response2->assertSee('Surat Masuk');
-        $response2->assertSee('Surat Keluar');
         $response2->assertSee('Pengguna');
-        $response2->assertSee('Pemasukan Kas');
-        $response2->assertSee('Pengeluaran Kas');
-        $response2->assertSee('Saldo Kas');
+        $response2->assertSee('Jadwal Pengajian');
+        $response2->assertSee('Kehadiran Hari Ini');
+        $response2->assertDontSee('Pemasukan Kas');
+        $response2->assertDontSee('Pengeluaran Kas');
+        $response2->assertDontSee('Saldo Kas');
     }
 }

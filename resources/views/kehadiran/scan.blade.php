@@ -2,6 +2,66 @@
 @section('title_page','Scan QR Kehadiran')
 @section('content')
 
+    <style>
+        .scan-alert-popup {
+            position: fixed;
+            right: 24px;
+            top: 88px;
+            z-index: 20010;
+            width: min(420px, calc(100vw - 32px));
+            background: var(--bg-elevated);
+            border-radius: 14px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            border-left: 5px solid var(--warning);
+            display: none;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .scan-alert-popup.show {
+            display: block;
+        }
+
+        .scan-alert-popup .scan-alert-header {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 700;
+        }
+
+        .scan-alert-popup .scan-alert-body {
+            padding: 16px 18px 18px;
+            color: var(--text-main);
+        }
+
+        .scan-alert-popup .scan-alert-close {
+            border: 0;
+            background: transparent;
+            color: var(--warning);
+            cursor: pointer;
+            font-size: 18px;
+            line-height: 1;
+            padding: 0;
+            opacity: 0.7;
+        }
+
+        .scan-alert-popup .scan-alert-close:hover {
+            opacity: 1;
+        }
+
+        .scan-alert-popup .scan-alert-action {
+            text-align: right;
+            margin-top: 14px;
+        }
+
+        #history-table.table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(79, 140, 255, 0.03);
+        }
+    </style>
+
     <div class="mb-3">
         <a href="{{ route('kehadiran.report') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Kembali
@@ -15,7 +75,7 @@
         </div>
         <div class="col-md-6">
             <label for="session">Sesi</label>
-            <select id="attendance-session" class="form-control">
+            <select id="attendance-session" class="form-control select2">
                 <option value="Subuh">Subuh</option>
                 <option value="Isya">Isya</option>
             </select>
@@ -60,11 +120,12 @@
                                 <tr>
                                     <th>Waktu</th>
                                     <th>Nama Santri</th>
+                                    <th>Sesi</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody id="history-body">
-                                <tr><td colspan="3" class="text-muted text-center">Belum ada scan</td></tr>
+                                <tr><td colspan="4" class="text-muted text-center">Belum ada scan</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -78,7 +139,22 @@
         <input type="hidden" name="santri_id" id="form-santri-id" value="">
         <input type="hidden" name="date" id="form-date" value="">
         <input type="hidden" name="session" id="form-session" value="">
+        <input type="hidden" name="source" value="scan">
     </form>
+
+    <div class="scan-alert-popup" id="scan-alert-popup" role="alert" aria-live="assertive">
+        <div class="scan-alert-header">
+            <span><i class="fas fa-exclamation-circle mr-2"></i>Sudah Absen</span>
+            <button type="button" class="scan-alert-close" id="scan-alert-close" aria-label="Tutup">&times;</button>
+        </div>
+        <div class="scan-alert-body">
+            <p class="mb-1" id="scan-alert-message">Santri sudah absen.</p>
+            <small class="text-muted" id="scan-alert-detail"></small>
+            <div class="scan-alert-action">
+                <button type="button" class="btn btn-warning" id="scan-alert-ok">Mengerti</button>
+            </div>
+        </div>
+    </div>
 
     <script src="/js/html5-qrcode.min.js"></script>
     <script>
@@ -97,8 +173,28 @@
 
         let html5QrCode = null;
         let currentCameraId = null;
+        let lastScanKey = '';
+        let lastScanAt = 0;
+        let scanAlertOpen = false;
+        let scanAlertTimer = null;
 
         function onScanSuccess(decodedText, decodedResult) {
+            if (scanAlertOpen) {
+                return;
+            }
+
+            const session = attendanceSession.value;
+            const date = attendanceDate.value;
+            const scanKey = `${decodedText}-${date}-${session}`;
+            const now = Date.now();
+
+            if (scanKey === lastScanKey && (now - lastScanAt) < 2500) {
+                return;
+            }
+
+            lastScanKey = scanKey;
+            lastScanAt = now;
+
             // decodedText expected to be santri id (uuid)
             resultEl.textContent = decodedText;
 
@@ -115,13 +211,10 @@
                 return response.json();
             })
             .then(data => {
-                // Add to history
-                addHistoryEntry(data.name, 'Hadir');
-
                 // Now submit form via AJAX to toggle attendance WITHOUT page refresh
                 inputSantri.value = decodedText;
-                inputDate.value = attendanceDate.value;
-                inputSession.value = attendanceSession.value;
+                inputDate.value = date;
+                inputSession.value = session;
 
                 // Submit via AJAX instead of form.submit()
                 const formData = new FormData(form);
@@ -134,6 +227,17 @@
                     }
                 })
                 .then(response => response.json())
+                .then(response => {
+                    if (response.duplicate) {
+                        addHistoryEntry(data.name, response.session || session, 'Sudah Absen', true);
+                        showAlreadyAttendedPopup(data.name, response.session || session, date);
+                        resultEl.textContent = `${data.name} sudah absen ${response.session || session}`;
+                        return;
+                    }
+
+                    addHistoryEntry(data.name, response.session || session, 'Hadir', false);
+                    resultEl.textContent = `${data.name} masuk absen ${response.session || session}`;
+                })
                 .catch(err => {
                     console.error('Error submitting attendance:', err);
                     resultEl.textContent = 'Error: ' + err.message;
@@ -275,7 +379,8 @@
                         row.innerHTML = `
                             <td>${entry.time}</td>
                             <td>${entry.name}</td>
-                            <td><span class="badge badge-success">Hadir</span></td>
+                            <td><span class="badge badge-info">${entry.session || '-'}</span></td>
+                            <td>${statusBadge(entry.status || 'Hadir', entry.duplicate || false)}</td>
                         `;
                         historyBody.appendChild(row);
                     });
@@ -285,20 +390,39 @@
             }
         }
 
-        // Add entry to history table (unique per santri)
-        function addHistoryEntry(santriName, status) {
+        function statusBadge(status, duplicate) {
+            const className = duplicate ? 'badge-warning' : 'badge-success';
+            const icon = duplicate ? 'fa-exclamation-circle' : 'fa-check';
+            return `<span class="badge ${className}"><i class="fas ${icon} mr-1"></i>${status}</span>`;
+        }
+
+        function showAlreadyAttendedPopup(santriName, session, date) {
+            scanAlertOpen = true;
+
+            document.getElementById('scan-alert-message').textContent = `${santriName} sudah absen pada sesi ${session}.`;
+            document.getElementById('scan-alert-detail').textContent = `Tanggal: ${date}. Data absen tidak diubah.`;
+
+            document.getElementById('scan-alert-popup').classList.add('show');
+
+            if (scanAlertTimer) {
+                clearTimeout(scanAlertTimer);
+            }
+
+            scanAlertTimer = setTimeout(hideAlreadyAttendedPopup, 4500);
+        }
+
+        function hideAlreadyAttendedPopup() {
+            document.getElementById('scan-alert-popup').classList.remove('show');
+            scanAlertOpen = false;
+            lastScanKey = '';
+            lastScanAt = 0;
+        }
+
+        // Add entry to history table
+        function addHistoryEntry(santriName, session, status, duplicate) {
             const historyBody = document.getElementById('history-body');
             const now = new Date();
             const timeStr = now.toLocaleTimeString('id-ID');
-
-            // Remove existing row if santri already exists
-            const existingRows = historyBody.querySelectorAll('tr');
-            existingRows.forEach(row => {
-                const nameCell = row.querySelector('td:nth-child(2)');
-                if (nameCell && nameCell.textContent === santriName) {
-                    row.remove();
-                }
-            });
 
             // Clear empty message if needed
             const emptyRow = historyBody.querySelector('tr:has(td.text-muted)');
@@ -310,12 +434,13 @@
             row.innerHTML = `
                 <td>${timeStr}</td>
                 <td>${santriName}</td>
-                <td><span class="badge badge-success">Hadir</span></td>
+                <td><span class="badge badge-info">${session}</span></td>
+                <td>${statusBadge(status, duplicate)}</td>
             `;
             historyBody.insertBefore(row, historyBody.firstChild);
 
             // Save to localStorage
-            saveHistoryToStorage(santriName, timeStr);
+            saveHistoryToStorage(santriName, session, status, duplicate, timeStr);
 
             // Keep only last 20 entries visible
             while (historyBody.rows.length > 20) {
@@ -323,8 +448,8 @@
             }
         }
 
-        // Save history to localStorage (unique per santri name)
-        function saveHistoryToStorage(santriName, timeStr) {
+        // Save history to localStorage
+        function saveHistoryToStorage(santriName, session, status, duplicate, timeStr) {
             const stored = localStorage.getItem('scanHistory');
             let entries = [];
 
@@ -337,13 +462,13 @@
                 }
             }
 
-            // Remove if this santri already exists
-            entries = entries.filter(entry => entry.name !== santriName);
-
             // Add new entry at the beginning
             entries.unshift({
                 time: timeStr,
-                name: santriName
+                name: santriName,
+                session: session,
+                status: status,
+                duplicate: duplicate
             });
 
             // Keep only last 20 entries in storage
@@ -357,7 +482,7 @@
             if (confirm('Yakin ingin menghapus semua riwayat scan?')) {
                 localStorage.removeItem('scanHistory');
                 const historyBody = document.getElementById('history-body');
-                historyBody.innerHTML = '<tr><td colspan="3" class="text-muted text-center">Belum ada scan</td></tr>';
+                historyBody.innerHTML = '<tr><td colspan="4" class="text-muted text-center">Belum ada scan</td></tr>';
             }
         }
 
@@ -366,6 +491,9 @@
         if (clearBtn) {
             clearBtn.addEventListener('click', clearHistory);
         }
+
+        document.getElementById('scan-alert-close').addEventListener('click', hideAlreadyAttendedPopup);
+        document.getElementById('scan-alert-ok').addEventListener('click', hideAlreadyAttendedPopup);
 
         // Check if document is already loaded
         if (document.readyState === 'loading') {

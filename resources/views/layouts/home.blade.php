@@ -12,6 +12,11 @@
     <!-- Favicon -->
     <link rel="favicon icon" href="{{ asset('assets/img/ppm_am.png') }}" type="image/x-icon">
 
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
     <!-- General CSS Files -->
     <link rel="stylesheet" href="{{ asset('assets/modules/bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/modules/fontawesome/css/all.min.css') }}">
@@ -36,6 +41,18 @@
 </head>
 
 <body>
+    <script>
+        try {
+            var w = window.innerWidth;
+            if (w > 1024) {
+                if (localStorage.getItem('sidebar_mini') === 'true') {
+                    document.body.classList.add('sidebar-mini');
+                }
+            } else {
+                document.body.classList.add('sidebar-gone');
+            }
+        } catch (_) {}
+    </script>
     <div id="app">
         <div class="main-wrapper main-wrapper-1">
             <div class="navbar-bg"></div>
@@ -87,10 +104,8 @@
                     </div>
 
                     <div class="section-body">
-                        <div class="card">
-                            <div class="p-3">
-                                @yield('content')
-                            </div>
+                        <div class="content-shell">
+                            @yield('content')
                         </div>
                     </div>
                 </section>

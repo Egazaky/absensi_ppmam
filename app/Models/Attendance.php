@@ -11,6 +11,7 @@ class Attendance extends Model
     use HasFactory, Uuids;
 
     public $incrementing = false;
+
     protected $guarded = [];
 
     protected $casts = [

@@ -8,6 +8,12 @@
             <div class="row">
                 <div class="col-sm">
                     <div class="form-group">
+                        <label for="nis">NIS (Nomor Induk Santri)</label>
+                        <input type="text" class="form-control" placeholder="Dibuat otomatis" readonly disabled>
+                    </div>
+                </div>
+                <div class="col-sm">
+                    <div class="form-group">
                         <label for="name">Nama</label>
                         <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}">
 

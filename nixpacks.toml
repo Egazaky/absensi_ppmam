@@ -1,0 +1,4 @@
+[phases.postbuild]
+cmds = [
+    "php artisan migrate --force"
+]

@@ -20,13 +20,12 @@ class LogActivityController extends Controller
 
     /**
      * Show the application log activites.
-     *
      */
     public function index(Request $request)
     {
         $data = LogActivity::with('users')->latest()->paginate(10);
         $keyword = $request->keyword;
-        if ($keyword)
+        if ($keyword) {
             $data = LogActivity::with('users')
                 ->where('subject', 'LIKE', "%$keyword%")
                 ->orWhere('url', 'LIKE', "%$keyword%")
@@ -38,7 +37,8 @@ class LogActivityController extends Controller
                 })
                 ->latest()
                 ->paginate(10);
-        
+        }
+
         return view('log-activities', compact('data'));
     }
 }

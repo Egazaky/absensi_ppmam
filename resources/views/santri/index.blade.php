@@ -35,6 +35,7 @@
             <thead>
                 <tr align="center">
                     <th width="5%">No</th>
+                    <th>NIS</th>
                     <th>Nama</th>
                     <th>Alamat</th>
                     <th>No. HP</th>
@@ -45,6 +46,7 @@
                 @forelse ($data as $santri => $result)
                     <tr>
                         <td>{{ $santri + $data->firstitem() }}</td>
+                        <td>{{ $result->nis ?: '-' }}</td>
                         <td><a href="{{ route('santri.show', $result->id) }}">{{ $result->name }}</a></td>
                         <td>{{ $result->address }}</td>
                         <td>{{ $result->phone }}</td>
@@ -70,11 +72,13 @@
             </tbody>
         </table>
     </div>
-    <div class="mt-2 float-left">
-        <span class="ml-3">Data Keseluruhan: <span class="text-primary font-weight-bold">{{ $totalCount }}</span> telah terdaftar.</span>
-    </div>
-    <div class="mt-3 float-right">
-        {{ $data->links() }}
+    <div class="d-flex justify-content-between align-items-center flex-wrap mt-4">
+        <div>
+            <span class="text-muted ml-3">Data Keseluruhan: <span class="text-primary font-weight-bold">{{ $totalCount }}</span> telah terdaftar.</span>
+        </div>
+        <div>
+            {{ $data->links() }}
+        </div>
     </div>
 
 @endsection

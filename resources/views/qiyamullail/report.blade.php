@@ -13,6 +13,14 @@
                 <strong>{{ $startOfPeriod->isoFormat('D MMMM Y') }}</strong> -
                 <strong>{{ $endOfPeriod->isoFormat('D MMMM Y') }}</strong>
             </div>
+            <div class="mt-2 text-right">
+                <a href="{{ route('qiyam.export.pdf', ['date' => $selectedDate]) }}" class="btn btn-primary mr-2">
+                    <i class="fas fa-file-pdf"></i> Cetak PDF
+                </a>
+                <a href="{{ route('qiyam.export.excel', ['date' => $selectedDate]) }}" class="btn btn-success">
+                    <i class="fas fa-file-excel"></i> Export Excel
+                </a>
+            </div>
         </div>
     </div>
 

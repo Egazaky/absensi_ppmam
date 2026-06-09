@@ -2,13 +2,11 @@
 
 namespace Tests\Feature\Cms;
 
-use App\Models\CashBook;
-use App\Models\InMail;
-use App\Models\OutMail;
+use App\Models\Attendance;
 use App\Models\Santri;
+use App\Models\Schedule;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class HomeControllerTest extends TestCase
@@ -30,11 +28,8 @@ class HomeControllerTest extends TestCase
         $response->assertViewHasAll([
             'santri',
             'users',
-            'debit',
-            'credit',
-            'balance',
-            'in_mail',
-            'out_mail'
+            'schedules',
+            'todayAttendances',
         ]);
     }
 
@@ -42,24 +37,30 @@ class HomeControllerTest extends TestCase
     {
         // every time a new factory user is created
         // one new santri will be created
-        $user     = User::factory()->create();
-        $inMail   = InMail::factory()->create();
-        $outMail  = OutMail::factory()->create();
-        $cashBook = CashBook::factory()->create([
-            'debit'  => 100,
-            'credit' => 50
+        $user = User::factory()->create();
+        Schedule::create([
+            'title' => 'Kajian Subuh',
+            'teacher' => 'Ustadz',
+            'description' => 'Kajian rutin',
+            'session' => 'subuh',
+            'date' => date('Y-m-d'),
+            'time' => '05:00',
+            'created_by' => $user->id,
+        ]);
+        Attendance::create([
+            'date' => date('Y-m-d'),
+            'santri_id' => $user->santri_id,
+            'session' => 'Subuh',
+            'status' => true,
         ]);
 
         $this->signIn('Administrator', $user);
 
         $response = $this->get(route('home'));
         $response->assertStatus(200)
-                 ->assertViewHas('santri', 1)
-                 ->assertViewHas('users', 1)
-                 ->assertViewHas('in_mail', 1)
-                 ->assertViewHas('out_mail', 1)
-                 ->assertViewHas('debit', 100)
-                 ->assertViewHas('credit', 50)
-                 ->assertViewHas('balance', 50);
+            ->assertViewHas('santri', 1)
+            ->assertViewHas('users', 1)
+            ->assertViewHas('schedules', 1)
+            ->assertViewHas('todayAttendances', 1);
     }
 }

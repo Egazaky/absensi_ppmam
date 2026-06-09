@@ -2,8 +2,9 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
 use Carbon\Carbon;
+use Closure;
+use Illuminate\Http\Request;
 
 class CheckQiyamTime
 {
@@ -12,8 +13,7 @@ class CheckQiyamTime
      * Allow access for users who are NOT role 'Santri' at any time.
      * For users with role 'Santri', allow access only between 01:30 and 03:30.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param  Request  $request
      * @return mixed
      */
     public function handle($request, Closure $next)

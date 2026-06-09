@@ -54,7 +54,8 @@ $(function() {
   let sidebar_nicescroll_opts = {
     cursoropacitymin: 0,
     cursoropacitymax: .8,
-    zindex: 892
+    zindex: 892,
+    horizrailenabled: false
   }, now_layout_class = null;
 
   var sidebar_sticky = function() {
@@ -299,7 +300,9 @@ $(function() {
 
   // Select2
   if(jQuery().select2) {
-    $(".select2").select2();
+    $(".select2").select2({
+      minimumResultsForSearch: 10
+    });
   }
 
   // Selectric

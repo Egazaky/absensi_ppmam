@@ -16,7 +16,8 @@ class PasswordController extends Controller
      *
      * @return void
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->middleware('auth:api');
     }
 
@@ -25,17 +26,17 @@ class PasswordController extends Controller
         $user = $request->user();
 
         $validator = Validator::make($request->all(), [
-            'current_password'      => 'required|string|min:8',
-            'password'              => 'required|string|min:8',
-            'password_confirmation' => 'required|string|min:8|same:password'
+            'current_password' => 'required|string|min:8',
+            'password' => 'required|string|min:8',
+            'password_confirmation' => 'required|string|min:8|same:password',
         ]);
-        
+
         try {
             if ($validator->fails()) {
                 return response()->json([
-                    'status'  => 'error',
+                    'status' => 'error',
                     'message' => 'Validation Error',
-                    'data'    => $validator->errors(),
+                    'data' => $validator->errors(),
                 ], 400);
             }
 
@@ -45,22 +46,22 @@ class PasswordController extends Controller
                 $user->password = bcrypt(request('password'));
                 $user->save();
 
-                LogActivity::addToLog('Ubah Password');    
+                LogActivity::addToLog('Ubah Password');
 
                 return response()->json([
-                    'status'  => 'success',
-                    'message' => 'Password updated successfully'
+                    'status' => 'success',
+                    'message' => 'Password updated successfully',
                 ], 200);
             }
 
             return response()->json([
-                'status'  => 'error',
-                'message' => 'Old Password wrong'
+                'status' => 'error',
+                'message' => 'Old Password wrong',
             ], 400);
         } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 500);
         }
     }

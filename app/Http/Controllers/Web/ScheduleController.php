@@ -15,6 +15,7 @@ class ScheduleController extends Controller
     public function index()
     {
         $schedules = Schedule::with('creator')->orderBy('date', 'desc')->get();
+
         return view('jadwal.index', compact('schedules'));
     }
 
@@ -26,6 +27,7 @@ class ScheduleController extends Controller
         if (Auth::user()->role == 'Santri') {
             abort(403, 'Unauthorized');
         }
+
         return view('jadwal.create');
     }
 
@@ -46,6 +48,20 @@ class ScheduleController extends Controller
             'time' => 'required|date_format:H:i',
         ]);
 
+        $time1 = \Carbon\Carbon::parse($request->time)->format('H:i');
+        $time2 = \Carbon\Carbon::parse($request->time)->format('H:i:s');
+
+        $conflict = Schedule::whereDate('date', $request->date)
+            ->whereIn('time', [$time1, $time2])
+            ->where('session', $request->session)
+            ->exists();
+
+        if ($conflict) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'date' => 'Jadwal pada tanggal, waktu, dan sesi tersebut sudah tersedia atau bentrok.',
+            ]);
+        }
+
         Schedule::create([
             'title' => $request->title,
             'teacher' => $request->teacher,
@@ -65,6 +81,7 @@ class ScheduleController extends Controller
     public function show(string $id)
     {
         $schedule = Schedule::with('creator')->findOrFail($id);
+
         return view('jadwal.show', compact('schedule'));
     }
 
@@ -77,6 +94,7 @@ class ScheduleController extends Controller
             abort(403, 'Unauthorized');
         }
         $schedule = Schedule::findOrFail($id);
+
         return view('jadwal.edit', compact('schedule'));
     }
 
@@ -88,6 +106,9 @@ class ScheduleController extends Controller
         if (Auth::user()->role == 'Santri') {
             abort(403, 'Unauthorized');
         }
+
+        $schedule = Schedule::findOrFail($id);
+
         $request->validate([
             'title' => 'required|string|max:255',
             'teacher' => 'required|string|max:255',
@@ -97,7 +118,21 @@ class ScheduleController extends Controller
             'time' => 'required|date_format:H:i',
         ]);
 
-        $schedule = Schedule::findOrFail($id);
+        $time1 = \Carbon\Carbon::parse($request->time)->format('H:i');
+        $time2 = \Carbon\Carbon::parse($request->time)->format('H:i:s');
+
+        $conflict = Schedule::whereDate('date', $request->date)
+            ->whereIn('time', [$time1, $time2])
+            ->where('session', $request->session)
+            ->where('id', '!=', $schedule->id)
+            ->exists();
+
+        if ($conflict) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'date' => 'Jadwal pada tanggal, waktu, dan sesi tersebut sudah tersedia atau bentrok.',
+            ]);
+        }
+
         $schedule->update([
             'title' => $request->title,
             'teacher' => $request->teacher,

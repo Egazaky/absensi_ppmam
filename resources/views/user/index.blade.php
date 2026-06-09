@@ -12,7 +12,7 @@
     @endif
 
     <div class="row">
-        @if (Auth::user()->role !='Santri')
+        @if (Auth::user()->isAdmin())
         <div class="col-md-8">
             <a href="{{ route('pengguna.create') }}" class="btn btn-primary">Tambah Pengguna</a><br><br>
         </div>
@@ -57,7 +57,7 @@
                                 <small class="text-warning">No Action</small>
                             @else
                                 <a href="{{ route('pengguna.edit', $result->id) }}" type="button" class="btn btn-sm btn-info"><i class="fas fa-pen"></i></a>
-                                <a href="javascript:void(0)" id="btn-delete" class="btn btn-sm btn-danger" onclick="deleteData('{{ $result->id }}')" data-toggle="modal" data-target="#deleteSuratModal"><i class="fas fa-trash"></i></a>
+                                <a href="javascript:void(0)" id="btn-delete" class="btn btn-sm btn-danger" onclick="deleteData('{{ $result->id }}')" data-toggle="modal" data-target="#deletePenggunaModal"><i class="fas fa-trash"></i></a>
                             @endif
                         </td>
                     </tr>
@@ -70,11 +70,13 @@
             </tbody>
         </table>
     </div>
-    <div class="mt-2 float-left">
-        <span class="ml-3">Data Keseluruhan: <span class="text-primary font-weight-bold">{{ Auth::user()->role == 'SuperAdmin' ? DB::table('users')->count() : DB::table('users')->where('role', '!=', 'SuperAdmin')->count() }}</span> Pengguna.</span>
-    </div>
-    <div class="mt-3 float-right">
-        {{ $data->links() }}
+    <div class="d-flex justify-content-between align-items-center flex-wrap mt-4">
+        <div>
+            <span class="text-muted ml-3">Data Keseluruhan: <span class="text-primary font-weight-bold">{{ Auth::user()->role == 'SuperAdmin' ? DB::table('users')->count() : DB::table('users')->where('role', '!=', 'SuperAdmin')->count() }}</span> Pengguna.</span>
+        </div>
+        <div>
+            {{ $data->links() }}
+        </div>
     </div>
 
 @endsection
@@ -82,7 +84,7 @@
 @section('modal')
     <!-- Modal Delete -->
     @if(Auth::user()->role !='Santri')
-    <div class="modal fade" id="deleteSuratModal" tabindex="-1" role="dialog">
+    <div class="modal fade" id="deletePenggunaModal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <form action="javascript:void(0)" id="deleteForm" method="post">
                 @method('DELETE')
@@ -110,10 +112,6 @@
 
 @section('script')
     <script>
-        function viewFile(data) {
-            let url = window.location.origin+'/storage/in-mail/'+data;
-            $('#embed-file').attr('src', url);
-        }
         function deleteData(id) {
             let url = '{{ route("pengguna.destroy", ":id") }}';
             url     = url.replace(':id', id);

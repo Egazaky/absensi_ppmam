@@ -6,7 +6,7 @@
         <h4>{{ $santri->name }}</h4>
         <p>Tunjukkan QR ini kepada petugas untuk melakukan absensi.</p>
 
-        <div style="display:inline-block; padding:10px; background:#fff;" id="qrcode-container">
+        <div style="display:inline-block; padding:10px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:12px;" id="qrcode-container">
             @php
                 $qrText = rawurlencode($santri->id);
                 // Use QuickChart QR endpoint to avoid deprecated Google Charts API

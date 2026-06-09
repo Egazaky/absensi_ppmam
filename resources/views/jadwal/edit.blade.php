@@ -34,7 +34,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="session">Sesi</label>
-                        <select class="form-control @error('session') is-invalid @enderror" name="session" required>
+                        <select class="form-control select2 @error('session') is-invalid @enderror" name="session" required>
                             <option value="">Pilih Sesi</option>
                             <option value="isya" {{ old('session', $schedule->session) == 'isya' ? 'selected' : '' }}>Isya</option>
                             <option value="subuh" {{ old('session', $schedule->session) == 'subuh' ? 'selected' : '' }}>Subuh</option>

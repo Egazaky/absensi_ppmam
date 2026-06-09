@@ -8,10 +8,10 @@ class LogActivity
 {
     public static function addToLog($subject)
     {
-    	$log = [];
-    	$log['subject'] = $subject;
-    	$log['url'] = request()->fullUrl();
-    	$log['user_id'] = !auth()->check() ?: auth()->user()->id;
-    	ModelsLogActivity::create($log);
+        $log = [];
+        $log['subject'] = $subject;
+        $log['url'] = request()->fullUrl();
+        $log['user_id'] = ! auth()->check() ?: auth()->user()->id;
+        ModelsLogActivity::create($log);
     }
 }
