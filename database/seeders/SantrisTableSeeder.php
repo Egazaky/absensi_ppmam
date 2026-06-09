@@ -73,7 +73,10 @@ class SantrisTableSeeder extends Seeder
         ];
 
         foreach ($santris as $santri) {
-            Santri::create($santri);
+            Santri::firstOrCreate(
+                ['id' => $santri['id']],
+                $santri
+            );
         }
     }
 }

@@ -5,10 +5,6 @@ nixPkgs = ["...", "php83Extensions.pdo_mysql"]
 cmds = [
     "npm ci",
     "npm run production",
-    "php artisan optimize:clear",
-    "php artisan config:cache",
-    "php artisan route:cache",
-    "php artisan view:cache",
 ]
 
 [start]

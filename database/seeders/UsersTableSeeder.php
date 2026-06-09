@@ -18,6 +18,13 @@ class UsersTableSeeder extends Seeder
         $users = [
             [
                 'id' => Str::uuid(),
+                'email' => 'superadmin@ppm.am',
+                'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+                'role' => 'SuperAdmin',
+                'santri_id' => null,
+            ],
+            [
+                'id' => Str::uuid(),
                 'email' => 'admin@ponpes.com',
                 'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
                 'role' => 'Administrator',
@@ -40,7 +47,10 @@ class UsersTableSeeder extends Seeder
         ];
 
         foreach ($users as $user) {
-            User::create($user);
+            User::firstOrCreate(
+                ['email' => $user['email']],
+                $user
+            );
         }
     }
 }
