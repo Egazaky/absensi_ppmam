@@ -1,4 +1,15 @@
-[phases.postbuild]
+[phases.setup]
+nixPkgs = ["...", "php83Extensions.pdo_mysql"]
+
+[phases.build]
 cmds = [
-    "php artisan migrate --force"
+    "npm ci",
+    "npm run production",
+    "php artisan optimize:clear",
+    "php artisan config:cache",
+    "php artisan route:cache",
+    "php artisan view:cache",
 ]
+
+[start]
+cmd = "php artisan migrate --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"
