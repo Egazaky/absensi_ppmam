@@ -917,11 +917,48 @@ select option {
               radial-gradient(circle at 90% 80%, rgba(124, 58, 237, 0.06) 0%, transparent 50%),
               var(--bg-main) !important;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 .login-container {
   position: relative;
   z-index: 10;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.login-container > .section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+}
+.login-container > .section > .container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.login-container > .section > .container > .row {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: center;
+}
+.login-container > .section > .container > .row > div[class*="col-"] {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
+  min-height: 100%;
+}
+.login-container .simple-footer {
+  margin-top: auto !important;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 .login-bg-blob {
   position: absolute;
