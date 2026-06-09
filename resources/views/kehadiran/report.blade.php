@@ -3,7 +3,7 @@
 @section('content')
 
     <div class="row mb-4">
-        <div class="col-md-6">
+        <div class="col-md-6 mb-3 mb-md-0">
             <label for="date">Pilih Tanggal dalam Minggu</label>
             <input type="date" name="date" id="date" class="form-control" value="{{ $selectedDate }}" onchange="window.location.href='{{ route('kehadiran.report') }}?date=' + this.value">
         </div>
@@ -13,7 +13,7 @@
                 <strong>{{ $startOfWeek->isoFormat('D MMMM Y') }}</strong> -
                 <strong>{{ $endOfWeek->isoFormat('D MMMM Y') }}</strong>
             </div>
-            <div class="mt-2 text-right">
+            <div class="mt-2 btn-group-mobile text-right">
                 <a href="{{ route('kehadiran.export.pdf', ['date' => $selectedDate]) }}" class="btn btn-primary mr-2">
                     <i class="fas fa-file-pdf"></i> Cetak PDF
                 </a>
