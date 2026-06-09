@@ -920,14 +920,14 @@ select option {
   overflow: hidden !important;
   height: 100vh !important;
   width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 .login-container {
   position: relative;
   z-index: 10;
-  height: 100% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+  width: 100% !important;
 }
 .login-container > .section {
   width: 100% !important;
@@ -939,12 +939,8 @@ select option {
   margin-bottom: 0 !important;
 }
 .login-container .simple-footer {
-  position: absolute !important;
-  bottom: 24px !important;
-  left: 0 !important;
-  right: 0 !important;
-  margin: 0 !important;
   text-align: center !important;
+  margin-top: 24px !important;
   padding: 0 !important;
 }
 .login-bg-blob {
