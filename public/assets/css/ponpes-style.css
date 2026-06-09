@@ -370,6 +370,17 @@ input[type="date"] {
   min-width: 0 !important;
   box-sizing: border-box !important;
 }
+
+/* Fix for input date overflow on mobile browsers (Safari iOS/Chrome Mobile) */
+input[type="date"] {
+  display: block !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+input[type="date"]::-webkit-date-and-time-value {
+  min-height: 1.5em;
+  display: block;
+}
 .form-control:hover, .custom-select:hover {
   border-color: var(--border-color-hover) !important;
 }
@@ -1357,6 +1368,23 @@ pre {
     margin: 0 !important;
     flex: 1 1 auto !important;
     text-align: center !important;
+  }
+}
+
+/* --- Footer Mobile Optimization --- */
+@media (max-width: 768px) {
+  .main-footer {
+    text-align: center !important;
+  }
+  .main-footer .footer-left,
+  .main-footer .footer-right {
+    float: none !important;
+    display: block !important;
+    width: 100% !important;
+    text-align: center !important;
+  }
+  .main-footer .footer-left {
+    margin-bottom: 8px !important;
   }
 }
 
