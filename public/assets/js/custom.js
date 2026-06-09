@@ -17,6 +17,12 @@ $(function () {
 
   $('form').on('submit', function () {
     var form = $(this);
+
+    // If form has client-side validation and is invalid, don't change button loading state
+    if (form.hasClass('needs-validation') && form[0] && form[0].checkValidity() === false) {
+      return;
+    }
+
     var submitButton = form.find('button[type="submit"]').filter(':visible').first();
 
     if (!submitButton.length || submitButton.data('skip-loading')) {

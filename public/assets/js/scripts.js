@@ -477,7 +477,7 @@ $(function() {
   });
 
   // Bootstrap 4 Validation
-  $(".needs-validation").submit(function() {
+  $(".needs-validation").submit(function(event) {
     var form = $(this);
     if (form[0].checkValidity() === false) {
       event.preventDefault();

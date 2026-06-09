@@ -60,9 +60,12 @@
                 </div>
                 <form method="POST" action="{{ route('login') }}" class="needs-validation" novalidate="">
                 @csrf
-                   <div class="form-group">
+                    <div class="form-group">
                         <label for="email" class="control-label">{{ __('E-Mail Address') }}</label>
                         <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" placeholder="Enter your email" required autocomplete="email" autofocus>
+                        <div class="invalid-feedback">
+                            Please fill in your email.
+                        </div>
 
                         @error('email')
                             <span class="invalid-feedback" role="alert">
@@ -81,6 +84,9 @@
                         <div class="input-group-text">
                             <a href="javascript:void(0)"><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
                         </div>
+                      </div>
+                      <div class="invalid-feedback">
+                          Please fill in your password.
                       </div>
 
                       @error('password')
