@@ -1285,6 +1285,13 @@ pre {
 }
 
 /* --- Input Group Style & Rounded Corner Refinements --- */
+/* Ensure elements inside input group do not wrap to the next line due to general form-control 100% width rule */
+.input-group > .form-control,
+.input-group > .custom-select {
+  width: 1% !important;
+  flex: 1 1 auto !important;
+}
+
 /* Ensure elements in an input group flow seamlessly together instead of looking like separate pills */
 .input-group > .form-control:not(:last-child),
 .input-group > .custom-select:not(:last-child) {
