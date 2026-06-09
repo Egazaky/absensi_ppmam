@@ -141,7 +141,7 @@
 </style>
 
 <div class="dashboard-hero">
-    <h2>Selamat datang, {{ Auth::user()->santris->name }}</h2>
+    <h2>Selamat datang, {{ Auth::user()->santris?->name ?? Auth::user()->role }}</h2>
     <p>Ringkasan data pondok dan aktivitas kehadiran hari ini.</p>
 </div>
 

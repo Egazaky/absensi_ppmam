@@ -47,7 +47,13 @@
                     @if (Auth::user()->role == 'SuperAdmin' || $result->role != 'SuperAdmin')
                     <tr>
                         <td>{{ $counter++ }}</td>
-                        <td><a href="{{ route('santri.show', $result->santris->id) }}">{{ $result->santris->name }}</a></td>
+                        <td>
+                            @if ($result->santris)
+                                <a href="{{ route('santri.show', $result->santris->id) }}">{{ $result->santris->name }}</a>
+                            @else
+                                {{ $result->role }}
+                            @endif
+                        </td>
                         <td>{{ $result->email }}</td>
                         <td>{{ $result->role }}</td>
                         <td align="center">

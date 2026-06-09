@@ -37,7 +37,7 @@
                         <td><small class="text-primary">{{ \Carbon\Carbon::parse($result->created_at)->diffForHumans() }}</small></td>
                         <td>{{ $result->subject }}</td>
                         <td><small class="text-warning">{{ $result->url }}</small></td>
-                        <td>{{ $result->users->santris->name }} <br><small class="text-info">{{ $result->users->email }}</small> </td>
+                        <td>{{ $result->users->santris?->name ?? $result->users->role }} <br><small class="text-info">{{ $result->users->email }}</small> </td>
                     </tr>
                 @empty
                     <tr>
