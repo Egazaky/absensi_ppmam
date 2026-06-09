@@ -346,6 +346,8 @@ body.sidebar-mini .main-sidebar:after {
 /* --- Form Controls --- */
 .form-control,
 .custom-select {
+  width: 100% !important;
+  max-width: 100% !important;
   border-radius: 10px !important;
   border: 1.5px solid var(--border-color) !important;
   background-color: var(--bg-input) !important;
@@ -510,6 +512,12 @@ body.sidebar-mini .main-sidebar:after {
   border: 1.5px solid var(--border-color) !important;
   background-color: var(--bg-input) !important;
   color: var(--text-dim) !important;
+}
+
+input[type="date"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 /* --- Native Select --- */
