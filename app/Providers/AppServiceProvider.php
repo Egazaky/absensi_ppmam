@@ -27,8 +27,11 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::useBootstrap();
 
-        // Force HTTPS in production (Railway uses a reverse proxy)
-        if (app()->environment('production')) {
+        // Force HTTPS when behind a reverse proxy (e.g., Railway)
+        if (
+            isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https'
+            || str_starts_with(config('app.url', ''), 'https')
+        ) {
             URL::forceScheme('https');
         }
     }
