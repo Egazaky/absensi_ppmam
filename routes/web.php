@@ -26,6 +26,22 @@ Route::get('/', function () {
     return redirect()->route('home');
 });
 
+// TEMPORARY DEBUG ROUTE - remove after fixing
+Route::get('/debug-db', function () {
+    $users = \App\Models\User::select('email', 'role')->get();
+    $santriCount = \App\Models\Santri::count();
+    $tables = \Illuminate\Support\Facades\DB::select('SHOW TABLES');
+
+    return response()->json([
+        'users' => $users,
+        'santri_count' => $santriCount,
+        'tables' => $tables,
+        'db_connection' => config('database.default'),
+        'db_host' => config('database.connections.mysql.host'),
+        'mysql_url_set' => !empty(env('MYSQL_URL')),
+    ]);
+});
+
 Auth::routes([
     'register' => false,
     'reset' => false,
