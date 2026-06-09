@@ -917,48 +917,35 @@ select option {
               radial-gradient(circle at 90% 80%, rgba(124, 58, 237, 0.06) 0%, transparent 50%),
               var(--bg-main) !important;
   position: relative;
-  overflow-x: hidden;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  overflow: hidden !important;
+  height: 100vh !important;
+  width: 100% !important;
 }
 .login-container {
   position: relative;
   z-index: 10;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 .login-container > .section {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  margin: 0;
-  padding: 0;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 .login-container > .section > .container {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-.login-container > .section > .container > .row {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  justify-content: center;
-}
-.login-container > .section > .container > .row > div[class*="col-"] {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  justify-content: space-between;
-  min-height: 100%;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 }
 .login-container .simple-footer {
-  margin-top: auto !important;
-  padding-top: 20px;
-  padding-bottom: 20px;
+  position: absolute !important;
+  bottom: 24px !important;
+  left: 0 !important;
+  right: 0 !important;
+  margin: 0 !important;
+  text-align: center !important;
+  padding: 0 !important;
 }
 .login-bg-blob {
   position: absolute;
