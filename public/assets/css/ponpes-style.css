@@ -346,8 +346,6 @@ body.sidebar-mini .main-sidebar:after {
 /* --- Form Controls --- */
 .form-control,
 .custom-select {
-  width: 100% !important;
-  max-width: 100% !important;
   border-radius: 10px !important;
   border: 1.5px solid var(--border-color) !important;
   background-color: var(--bg-input) !important;
@@ -357,6 +355,20 @@ body.sidebar-mini .main-sidebar:after {
   padding: 8px 14px !important;
   transition: all 0.2s ease !important;
   box-shadow: none !important;
+}
+
+/* Safe width rules that do not break input-groups */
+.form-group .form-control,
+.form-group .custom-select,
+.row > div > .form-control,
+.row > div > .custom-select,
+.row > div > input,
+.row > div > select,
+input[type="date"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
 }
 .form-control:hover, .custom-select:hover {
   border-color: var(--border-color-hover) !important;
@@ -512,12 +524,6 @@ body.sidebar-mini .main-sidebar:after {
   border: 1.5px solid var(--border-color) !important;
   background-color: var(--bg-input) !important;
   color: var(--text-dim) !important;
-}
-
-input[type="date"] {
-  width: 100% !important;
-  max-width: 100% !important;
-  box-sizing: border-box !important;
 }
 
 /* --- Native Select --- */
