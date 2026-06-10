@@ -1,6 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
+  <script>
+      (function() {
+          var t = localStorage.getItem('theme') || 'dark';
+          document.documentElement.setAttribute('data-theme', t);
+      })();
+  </script>
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
   <title>403 &mdash; Akses Ditolak</title>
@@ -21,6 +27,7 @@
   <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
   <link rel="stylesheet" href="{{ asset('assets/css/components.css') }}">
   <link rel="stylesheet" href="{{ asset('assets/css/ponpes-style.css') }}">
+  <link rel="stylesheet" href="{{ asset('assets/css/dark-light-theme.css') }}">
 </head>
 
 <body class="login-body">
@@ -77,5 +84,31 @@
   <!-- Template JS File -->
   <script src="{{ asset('assets/js/scripts.js') }}"></script>
   <script src="{{ asset('assets/js/custom.js') }}"></script>
+
+  <button id="theme-toggle-btn" type="button" data-tooltip="Ganti Tema" aria-label="Toggle dark/light theme">
+      <span class="theme-icon"><i class="fas fa-moon"></i></span>
+  </button>
+  <script>
+  (function() {
+      var btn = document.getElementById('theme-toggle-btn');
+      if (!btn) return;
+      var icon = btn.querySelector('.theme-icon');
+      function getTheme() { return localStorage.getItem('theme') || 'dark'; }
+      function updateIcon(theme) {
+          icon.innerHTML = theme === 'light' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+          btn.setAttribute('data-tooltip', theme === 'light' ? 'Mode Gelap' : 'Mode Terang');
+      }
+      updateIcon(getTheme());
+      btn.addEventListener('click', function() {
+          var next = getTheme() === 'dark' ? 'light' : 'dark';
+          document.documentElement.classList.add('theme-transition');
+          document.documentElement.setAttribute('data-theme', next);
+          localStorage.setItem('theme', next);
+          icon.classList.remove('spin-in'); void icon.offsetWidth; icon.classList.add('spin-in');
+          updateIcon(next);
+          setTimeout(function() { document.documentElement.classList.remove('theme-transition'); }, 400);
+      });
+  })();
+  </script>
 </body>
 </html>

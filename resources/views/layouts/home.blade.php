@@ -1,8 +1,15 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
+    <script>
+        // Apply saved theme instantly to prevent flash of wrong theme
+        (function() {
+            var t = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -31,6 +38,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/components.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/ponpes-style.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/dark-light-theme.css') }}">
 
     <!-- CSS Custom -->
     <style>

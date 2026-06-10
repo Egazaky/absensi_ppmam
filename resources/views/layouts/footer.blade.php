@@ -37,6 +37,58 @@
 $('.alert').alert()
 </script>
 
+<!-- Theme Toggle Button -->
+<button id="theme-toggle-btn" type="button" data-tooltip="Ganti Tema" aria-label="Toggle dark/light theme">
+    <span class="theme-icon"><i class="fas fa-moon"></i></span>
+</button>
+
+<!-- Theme Toggle Script -->
+<script>
+(function() {
+    var btn = document.getElementById('theme-toggle-btn');
+    if (!btn) return;
+    var icon = btn.querySelector('.theme-icon');
+
+    function getTheme() {
+        return localStorage.getItem('theme') || 'dark';
+    }
+
+    function updateIcon(theme) {
+        if (theme === 'light') {
+            icon.innerHTML = '<i class="fas fa-sun"></i>';
+            btn.setAttribute('data-tooltip', 'Mode Gelap');
+        } else {
+            icon.innerHTML = '<i class="fas fa-moon"></i>';
+            btn.setAttribute('data-tooltip', 'Mode Terang');
+        }
+    }
+
+    // Init icon
+    updateIcon(getTheme());
+
+    btn.addEventListener('click', function() {
+        var current = getTheme();
+        var next = current === 'dark' ? 'light' : 'dark';
+
+        // Add transition class
+        document.documentElement.classList.add('theme-transition');
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+
+        // Animate icon
+        icon.classList.remove('spin-in');
+        void icon.offsetWidth; // force reflow
+        icon.classList.add('spin-in');
+        updateIcon(next);
+
+        // Remove transition class after animation
+        setTimeout(function() {
+            document.documentElement.classList.remove('theme-transition');
+        }, 400);
+    });
+})();
+</script>
+
 <!-- Template JS File -->
 <script src="{{ asset('assets/js/scripts.js') }}"></script>
 <script src="{{ asset('assets/js/custom.js') }}"></script>
